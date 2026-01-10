@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "digitacao-extension": {
+    "digitafacil": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -67,10 +67,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "digitacao-extension:build:production"
+              "buildTarget": "digitafacil:build:production"
             },
             "development": {
-              "buildTarget": "digitacao-extension:build:development"
+              "buildTarget": "digitafacil:build:development"
             }
           },
           "defaultConfiguration": "development"

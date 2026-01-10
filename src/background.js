@@ -1,5 +1,5 @@
 // Background Service Worker para Manifest V3
-console.log('Digitação Pro - Background Service Worker iniciado');
+console.log('DigitaFacil - Background Service Worker iniciado');
 
 // Abrir página quando clicar no ícone da extensão
 chrome.action.onClicked.addListener(() => {

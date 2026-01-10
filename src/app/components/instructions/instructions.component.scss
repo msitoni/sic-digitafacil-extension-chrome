@@ -1,0 +1,356 @@
+.instructions-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.instructions-header {
+  max-width: 1200px;
+  margin: 0 auto 30px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  h1 {
+    color: white;
+    font-size: 2rem;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.back-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s;
+
+  &:hover {
+    background: white;
+    color: #667eea;
+    transform: translateX(-5px);
+  }
+}
+
+.content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.step-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 30px;
+
+  .step {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #E0E0E0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #666;
+    transition: all 0.3s;
+
+    &.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      transform: scale(1.2);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+  }
+}
+
+.instruction-panel {
+  text-align: center;
+  margin-bottom: 40px;
+
+  h2 {
+    color: #333;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+  }
+
+  .instruction-text {
+    color: #666;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+}
+
+.keyboard-container {
+  margin: 40px 0;
+}
+
+.hands-guide {
+  display: flex;
+  justify-content: space-between;
+  max-width: 900px;
+  margin: 0 auto 30px;
+  padding: 0 20px;
+
+  .hand {
+    display: flex;
+    gap: 10px;
+  }
+
+  .finger-label {
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.keyboard {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px;
+  background: #f5f5f5;
+  border-radius: 15px;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.keyboard-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+
+  &.home-row {
+    .key {
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+  }
+}
+
+.key {
+  min-width: 60px;
+  height: 60px;
+  background: white;
+  border: 3px solid #E0E0E0;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #333;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+  position: relative;
+
+  &.highlighted {
+    animation: pulse 1.5s infinite;
+    border-width: 4px;
+    transform: scale(1.1);
+    z-index: 10;
+  }
+
+  &.base-position {
+    border-width: 4px;
+    font-weight: 900;
+  }
+
+  .bump {
+    position: absolute;
+    bottom: 8px;
+    font-size: 0.8rem;
+    color: #666;
+  }
+
+  &.spacebar {
+    min-width: 400px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-size: 1rem;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 15px rgba(102, 126, 234, 0);
+  }
+}
+
+.hand-positions {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 40px;
+  padding: 0 100px;
+
+  .hand-icon {
+    text-align: center;
+
+    .hand-emoji {
+      font-size: 4rem;
+      display: block;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+    }
+
+    &.left .hand-emoji {
+      transform: scaleX(-1);
+    }
+
+    .hand-text {
+      font-weight: bold;
+      color: #333;
+      font-size: 1.2rem;
+      margin-bottom: 5px;
+    }
+
+    .keys-text {
+      font-family: 'Courier New', monospace;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #667eea;
+      letter-spacing: 8px;
+    }
+  }
+}
+
+.tips-section {
+  background: #f8f9fa;
+  border-radius: 15px;
+  padding: 30px;
+  margin: 40px 0;
+
+  h3 {
+    color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+
+  .tips-list {
+    list-style: none;
+    padding: 0;
+
+    li {
+      padding: 12px 0;
+      padding-left: 30px;
+      position: relative;
+      color: #555;
+      font-size: 1.05rem;
+      line-height: 1.6;
+
+      &:before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #4CAF50;
+        font-weight: bold;
+        font-size: 1.3rem;
+      }
+    }
+  }
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+  gap: 20px;
+
+  .nav-button {
+    flex: 1;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &.prev {
+      background: #E0E0E0;
+      color: #333;
+
+      &:hover:not(:disabled) {
+        background: #BDBDBD;
+        transform: translateX(-5px);
+      }
+
+      &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+    }
+
+    &.next {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+
+      &:hover {
+        transform: translateX(5px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding: 20px;
+  }
+
+  .keyboard {
+    padding: 15px;
+  }
+
+  .key {
+    min-width: 40px;
+    height: 40px;
+    font-size: 1rem;
+
+    &.spacebar {
+      min-width: 250px;
+    }
+  }
+
+  .hand-positions {
+    padding: 0 20px;
+
+    .hand-icon .hand-emoji {
+      font-size: 2.5rem;
+    }
+
+    .keys-text {
+      font-size: 1.2rem;
+      letter-spacing: 4px;
+    }
+  }
+
+  .hands-guide {
+    flex-direction: column;
+    gap: 15px;
+
+    .hand {
+      justify-content: center;
+    }
+  }
+}

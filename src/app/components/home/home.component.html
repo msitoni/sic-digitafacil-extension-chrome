@@ -2,12 +2,30 @@
   <!-- Header -->
   <header class="app-header">
     <div class="header-content">
-      <h1>⌨️ Digitação Pro</h1>
-      <p class="subtitle">Aprenda datilografia do jeito profissional</p>
+      <h1>⌨️ DigitaFacil</h1>
+      <p class="subtitle">{{ 'APP.SUBTITLE' | translate }}</p>
+      <p class="user-name" *ngIf="currentUser">👤 {{ currentUser.name }}</p>
     </div>
     <div class="header-actions">
-      <button class="header-button" (click)="goToStats()">📊 Estatísticas</button>
-      <button class="header-button" (click)="goToSettings()">⚙️ Configurações</button>
+      <div class="language-selector">
+        <button class="header-button lang-btn" (click)="toggleLanguageSelector()" [title]="'HOME.CHANGE_LANGUAGE' | translate">
+          {{ getCurrentLanguageFlag() }} 🌐
+        </button>
+        <div class="language-dropdown" *ngIf="showLanguageSelector">
+          <button 
+            *ngFor="let lang of availableLanguages"
+            class="lang-option"
+            [class.active]="currentLanguage === lang.code"
+            (click)="changeLanguage(lang.code)"
+          >
+            {{ lang.flag }} {{ lang.name }}
+          </button>
+        </div>
+      </div>
+      <button class="header-button" (click)="goToInstructions()">📖 {{ 'HOME.INSTRUCTIONS' | translate }}</button>
+      <button class="header-button" (click)="goToStats()">📊 {{ 'STATS.TITLE' | translate }}</button>
+      <button class="header-button" (click)="goToSettings()">⚙️ {{ 'SETTINGS.TITLE' | translate }}</button>
+      <button class="header-button logout-btn" (click)="logout()" [title]="'HOME.LOGOUT' | translate">🚪 {{ 'HOME.LOGOUT' | translate }}</button>
     </div>
   </header>
 
@@ -17,7 +35,7 @@
       <div class="progress-stat">
         <div class="stat-icon">🎯</div>
         <div class="stat-content">
-          <div class="stat-label">Progresso Geral</div>
+          <div class="stat-label">{{ 'HOME.YOUR_PROGRESS' | translate }}</div>
           <div class="stat-value">{{ getProgressPercentage() }}%</div>
         </div>
       </div>
@@ -30,7 +48,7 @@
       <div class="stat-item">
         <div class="stat-icon">📚</div>
         <div class="stat-content">
-          <div class="stat-label">Lições Completas</div>
+          <div class="stat-label">{{ 'HOME.COMPLETED_LESSONS' | translate }}</div>
           <div class="stat-value">{{ progress.completedLessons.length }}</div>
         </div>
       </div>
@@ -38,7 +56,7 @@
       <div class="stat-item">
         <div class="stat-icon">🏆</div>
         <div class="stat-content">
-          <div class="stat-label">Nível Atual</div>
+          <div class="stat-label">{{ 'HOME.CURRENT_LEVEL' | translate }}</div>
           <div class="stat-value">{{ progress.level }}</div>
         </div>
       </div>
@@ -46,7 +64,7 @@
       <div class="stat-item">
         <div class="stat-icon">⭐</div>
         <div class="stat-content">
-          <div class="stat-label">XP Total</div>
+          <div class="stat-label">{{ 'HOME.TOTAL_XP' | translate }}</div>
           <div class="stat-value">{{ progress.xp }}</div>
         </div>
       </div>
@@ -54,8 +72,8 @@
       <div class="stat-item">
         <div class="stat-icon">🔥</div>
         <div class="stat-content">
-          <div class="stat-label">Sequência</div>
-          <div class="stat-value">{{ progress.streak }} dias</div>
+          <div class="stat-label">{{ 'HOME.CURRENT_STREAK' | translate }}</div>
+          <div class="stat-value">{{ progress.streak }} {{ 'HOME.DAYS' | translate }}</div>
         </div>
       </div>
     </div>
@@ -63,14 +81,14 @@
 
   <!-- Level Filter -->
   <div class="filter-section">
-    <h2>Escolha suas Lições</h2>
+    <h2>{{ 'HOME.AVAILABLE_LESSONS' | translate }}</h2>
     <div class="filter-buttons">
       <button 
         class="filter-button" 
         [class.active]="selectedLevel === 'all'"
         (click)="filterByLevel('all')"
       >
-        Todas
+        {{ 'HOME.ALL' | translate }}
       </button>
       <button 
         class="filter-button" 
@@ -78,7 +96,7 @@
         [style.--level-color]="getLevelColor('beginner')"
         (click)="filterByLevel('beginner')"
       >
-        Iniciante
+        {{ 'HOME.BEGINNER' | translate }}
       </button>
       <button 
         class="filter-button" 
@@ -86,7 +104,7 @@
         [style.--level-color]="getLevelColor('intermediate')"
         (click)="filterByLevel('intermediate')"
       >
-        Intermediário
+        {{ 'HOME.INTERMEDIATE' | translate }}
       </button>
       <button 
         class="filter-button" 
@@ -94,7 +112,7 @@
         [style.--level-color]="getLevelColor('advanced')"
         (click)="filterByLevel('advanced')"
       >
-        Avançado
+        {{ 'HOME.ADVANCED' | translate }}
       </button>
       <button 
         class="filter-button" 
@@ -102,7 +120,7 @@
         [style.--level-color]="getLevelColor('expert')"
         (click)="filterByLevel('expert')"
       >
-        Expert
+        {{ 'HOME.EXPERT' | translate }}
       </button>
     </div>
   </div>
@@ -131,7 +149,7 @@
             {{ getLevelLabel(lesson.level) }}
           </span>
           <span class="lesson-requirement">
-            {{ lesson.minPPM }} PPM · {{ lesson.minAccuracy }}% precisão
+            {{ lesson.minPPM }} PPM · {{ lesson.minAccuracy }}% {{ 'HOME.ACCURACY' | translate }}
           </span>
         </div>
       </div>
@@ -142,7 +160,7 @@
           *ngIf="!isLessonLocked(lesson.id)"
           [class.resume]="!isLessonCompleted(lesson.id)"
         >
-          {{ isLessonCompleted(lesson.id) ? 'Revisar' : 'Iniciar' }}
+          {{ isLessonCompleted(lesson.id) ? ('HOME.CONTINUE' | translate) : ('HOME.START' | translate) }}
         </button>
       </div>
     </div>

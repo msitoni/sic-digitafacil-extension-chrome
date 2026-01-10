@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { LessonService, Lesson } from '../../services/lesson.service';
 import { StorageService, UserProgress } from '../../services/storage.service';
+import { UserService, UserProfile } from '../../services/user.service';
 
 @Component({
   selector: 'app-home',
@@ -12,16 +14,70 @@ export class HomeComponent implements OnInit {
   lessons: Lesson[] = [];
   progress: UserProgress | null = null;
   selectedLevel: 'all' | 'beginner' | 'intermediate' | 'advanced' | 'expert' = 'all';
+  currentUser: UserProfile | null = null;
+  showLanguageSelector = false;
+  currentLanguage = 'pt-BR';
+  availableLanguages: Array<{code: 'pt-BR' | 'en' | 'es' | 'de' | 'fr' | 'it' | 'ja' | 'zh' | 'ru' | 'ar', name: string, flag: string}> = [
+    { code: 'pt-BR', name: 'Português', flag: '🇧🇷' },
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'es', name: 'Español', flag: '🇪🇸' },
+    { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+    { code: 'fr', name: 'Français', flag: '🇫🇷' },
+    { code: 'it', name: 'Italiano', flag: '🇮🇹' },
+    { code: 'ja', name: '日本語', flag: '🇯🇵' },
+    { code: 'zh', name: '中文', flag: '🇨🇳' },
+    { code: 'ru', name: 'Русский', flag: '🇷🇺' },
+    { code: 'ar', name: 'العربية', flag: '🇸🇦' }
+  ];
 
   constructor(
     private lessonService: LessonService,
     private storageService: StorageService,
-    private router: Router
+    private userService: UserService,
+    private router: Router,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
+    // Verifica se há usuário logado
+    this.userService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+      if (!user) {
+        // Redireciona para seleção de usuário se não estiver logado
+        this.router.navigate(['/user-selector']);
+      }
+    });
+
+    // Carrega idioma atual
+    this.storageService.settings$.subscribe(settings => {
+      if (settings && settings.language) {
+        this.currentLanguage = settings.language;
+      }
+    });
+
     this.loadLessons();
     this.loadProgress();
+  }
+
+  toggleLanguageSelector(): void {
+    this.showLanguageSelector = !this.showLanguageSelector;
+  }
+
+  async changeLanguage(languageCode: string): Promise<void> {
+    this.currentLanguage = languageCode;
+    await this.storageService.updateSetting('language', languageCode as any);
+    this.translate.use(languageCode);
+    this.showLanguageSelector = false;
+  }
+
+  getCurrentLanguageFlag(): string {
+    const lang = this.availableLanguages.find(l => l.code === this.currentLanguage);
+    return lang ? lang.flag : '🌐';
+  }
+
+  async logout(): Promise<void> {
+    await this.userService.logout();
+    this.router.navigate(['/user-selector']);
   }
 
   loadLessons(): void {
@@ -69,10 +125,10 @@ export class HomeComponent implements OnInit {
 
   getLevelLabel(level: string): string {
     switch (level) {
-      case 'beginner': return 'Iniciante';
-      case 'intermediate': return 'Intermediário';
-      case 'advanced': return 'Avançado';
-      case 'expert': return 'Expert';
+      case 'beginner': return this.translate.instant('HOME.BEGINNER');
+      case 'intermediate': return this.translate.instant('HOME.INTERMEDIATE');
+      case 'advanced': return this.translate.instant('HOME.ADVANCED');
+      case 'expert': return this.translate.instant('HOME.EXPERT');
       default: return '';
     }
   }
@@ -83,6 +139,10 @@ export class HomeComponent implements OnInit {
 
   goToSettings(): void {
     this.router.navigate(['/settings']);
+  }
+
+  goToInstructions(): void {
+    this.router.navigate(['/instructions']);
   }
 
   getProgressPercentage(): number {

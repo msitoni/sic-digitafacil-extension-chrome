@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, from, BehaviorSubject } from 'rxjs';
 import { TypingMetrics } from './typing.service';
+import { UserService } from './user.service';
+import { StorageAdapter } from '../utils/storage-adapter';
 
 export interface UserSettings {
   layout: 'ABNT2' | 'US' | 'ABNT' | 'UK';
@@ -9,6 +11,7 @@ export interface UserSettings {
   theme: 'light' | 'dark' | 'auto';
   practiceReminders: boolean;
   showKeyboard: boolean;
+  language: 'pt-BR' | 'en' | 'es' | 'de' | 'fr' | 'it' | 'ja' | 'zh' | 'ru' | 'ar';
 }
 
 export interface UserProgress {
@@ -51,9 +54,39 @@ export class StorageService {
   private progressSubject = new BehaviorSubject<UserProgress | null>(null);
   public progress$ = this.progressSubject.asObservable();
 
-  constructor() {
-    this.loadSettings();
-    this.loadProgress();
+  constructor(private userService: UserService) {
+    // Aguarda o usuário estar logado para carregar dados
+    this.userService.currentUser$.subscribe(user => {
+      if (user) {
+        this.loadSettings();
+        this.loadProgress();
+      } else {
+        // Limpa dados quando usuário desloga
+        this.settingsSubject.next(null);
+        this.progressSubject.next(null);
+      }
+    });
+  }
+
+  /**
+   * Força o recarregamento dos dados (útil após login)
+   */
+  async reloadData(): Promise<void> {
+    await this.loadSettings();
+    await this.loadProgress();
+  }
+
+  /**
+   * Obtém a chave de storage com prefixo do usuário
+   */
+  private getStorageKey(key: string): string {
+    try {
+      const prefix = this.userService.getUserStoragePrefix();
+      return `${prefix}${key}`;
+    } catch (error) {
+      // Se não houver usuário logado, usa chave sem prefixo (compatibilidade)
+      return key;
+    }
   }
 
   // ==================== SETTINGS ====================
@@ -63,8 +96,9 @@ export class StorageService {
    */
   private async loadSettings(): Promise<void> {
     try {
-      const result = await chrome.storage.local.get('settings');
-      const settings = result['settings'] || this.getDefaultSettings();
+      const storageKey = this.getStorageKey('settings');
+      const result = await StorageAdapter.get(storageKey);
+      const settings = result[storageKey] || this.getDefaultSettings();
       this.settingsSubject.next(settings);
     } catch (error) {
       console.error('Erro ao carregar settings:', error);
@@ -77,7 +111,8 @@ export class StorageService {
    */
   async saveSettings(settings: UserSettings): Promise<void> {
     try {
-      await chrome.storage.local.set({ settings });
+      const storageKey = this.getStorageKey('settings');
+      await StorageAdapter.set({ [storageKey]: settings });
       this.settingsSubject.next(settings);
     } catch (error) {
       console.error('Erro ao salvar settings:', error);
@@ -95,7 +130,8 @@ export class StorageService {
       soundEnabled: true,
       theme: 'light',
       practiceReminders: false,
-      showKeyboard: true
+      showKeyboard: true,
+      language: 'pt-BR'
     };
   }
 
@@ -118,8 +154,11 @@ export class StorageService {
    */
   private async loadProgress(): Promise<void> {
     try {
-      const result = await chrome.storage.local.get('progress');
-      const progress = result['progress'] || this.getDefaultProgress();
+      const storageKey = this.getStorageKey('progress');
+      console.log('Loading progress with key:', storageKey);
+      const result = await StorageAdapter.get(storageKey);
+      const progress = result[storageKey] || this.getDefaultProgress();
+      console.log('Progress loaded:', JSON.stringify(progress));
       this.progressSubject.next(progress);
     } catch (error) {
       console.error('Erro ao carregar progress:', error);
@@ -132,8 +171,12 @@ export class StorageService {
    */
   async saveProgress(progress: UserProgress): Promise<void> {
     try {
-      await chrome.storage.local.set({ progress });
+      const storageKey = this.getStorageKey('progress');
+      console.log('Saving progress with key:', storageKey);
+      console.log('Progress data to save:', JSON.stringify(progress));
+      await StorageAdapter.set({ [storageKey]: progress });
       this.progressSubject.next(progress);
+      console.log('Progress saved and subject updated');
     } catch (error) {
       console.error('Erro ao salvar progress:', error);
       throw error;
@@ -159,10 +202,15 @@ export class StorageService {
    * Marca uma lição como completa
    */
   async completeLesson(lessonId: number, practiceTime: number): Promise<void> {
+    console.log('completeLesson called:', { lessonId, practiceTime });
     const progress = this.progressSubject.value || this.getDefaultProgress();
+    console.log('Current progress before update:', JSON.stringify(progress));
     
     if (!progress.completedLessons.includes(lessonId)) {
       progress.completedLessons.push(lessonId);
+      console.log('Added lesson to completedLessons:', lessonId);
+    } else {
+      console.log('Lesson already completed:', lessonId);
     }
     
     progress.totalPracticeTime += practiceTime;
@@ -175,7 +223,9 @@ export class StorageService {
     // Atualizar streak
     this.updateStreak(progress);
     
+    console.log('Progress after update:', JSON.stringify(progress));
     await this.saveProgress(progress);
+    console.log('Progress saved successfully');
   }
 
   /**
@@ -223,8 +273,9 @@ export class StorageService {
    */
   async getStats(): Promise<UserStats> {
     try {
-      const result = await chrome.storage.local.get('stats');
-      return result['stats'] || this.getDefaultStats();
+      const storageKey = this.getStorageKey('stats');
+      const result = await StorageAdapter.get(storageKey);
+      return result[storageKey] || this.getDefaultStats();
     } catch (error) {
       console.error('Erro ao carregar stats:', error);
       return this.getDefaultStats();
@@ -275,7 +326,8 @@ export class StorageService {
       stats.errorsByKey[key] = (stats.errorsByKey[key] || 0) + count;
     });
     
-    await chrome.storage.local.set({ stats });
+    const storageKey = this.getStorageKey('stats');
+    await StorageAdapter.set({ [storageKey]: stats });
   }
 
   // ==================== SESSION HISTORY ====================
@@ -294,8 +346,9 @@ export class StorageService {
     };
     
     try {
-      const result = await chrome.storage.local.get('sessionHistory');
-      const history: SessionHistory[] = result['sessionHistory'] || [];
+      const storageKey = this.getStorageKey('sessionHistory');
+      const result = await StorageAdapter.get(storageKey);
+      const history: SessionHistory[] = result[storageKey] || [];
       
       // Manter apenas últimas 50 sessões
       history.unshift(session);
@@ -303,7 +356,7 @@ export class StorageService {
         history.pop();
       }
       
-      await chrome.storage.local.set({ sessionHistory: history });
+      await StorageAdapter.set({ [storageKey]: history });
     } catch (error) {
       console.error('Erro ao salvar sessão:', error);
     }
@@ -314,8 +367,9 @@ export class StorageService {
    */
   async getSessionHistory(limit?: number): Promise<SessionHistory[]> {
     try {
-      const result = await chrome.storage.local.get('sessionHistory');
-      const history: SessionHistory[] = result['sessionHistory'] || [];
+      const storageKey = this.getStorageKey('sessionHistory');
+      const result = await StorageAdapter.get(storageKey);
+      const history: SessionHistory[] = result[storageKey] || [];
       return limit ? history.slice(0, limit) : history;
     } catch (error) {
       console.error('Erro ao carregar histórico:', error);
@@ -327,9 +381,16 @@ export class StorageService {
 
   /**
    * Sincroniza dados com chrome.storage.sync (limitado a 100KB)
+   * Nota: Não funciona em desenvolvimento, apenas em produção como extensão
    */
   async syncData(): Promise<void> {
     try {
+      // Verifica se está em contexto de extensão
+      if (typeof chrome === 'undefined' || !chrome.storage || !chrome.storage.sync) {
+        console.warn('Sincronização não disponível em desenvolvimento');
+        return;
+      }
+
       const settings = this.settingsSubject.value;
       const progress = this.progressSubject.value;
       
@@ -354,8 +415,13 @@ export class StorageService {
    */
   async clearAllData(): Promise<void> {
     try {
-      await chrome.storage.local.clear();
-      await chrome.storage.sync.clear();
+      await StorageAdapter.clear();
+      
+      // Limpa sync storage se disponível
+      if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
+        await chrome.storage.sync.clear();
+      }
+      
       this.settingsSubject.next(this.getDefaultSettings());
       this.progressSubject.next(this.getDefaultProgress());
     } catch (error) {

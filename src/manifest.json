@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Digitação Pro - Curso de Datilografia",
+  "name": "DIGITAFACIL",
   "version": "1.0.0",
   "description": "Aprenda a digitar como um profissional com lições interativas, estatísticas e progresso em tempo real.",
   "icons": {
@@ -14,7 +14,7 @@
       "48": "assets/icons/icon-48.png",
       "128": "assets/icons/icon-128.png"
     },
-    "default_title": "Abrir Digitação Pro"
+    "default_title": "Abrir DIGITAFACIL"
   },
   "permissions": [
     "storage",

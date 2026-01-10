@@ -141,7 +141,9 @@ export class LessonComponent implements OnInit, OnDestroy {
    */
   startLesson(): void {
     this.isStarted = true;
-    this.typingService.startSession(this.targetText);
+    // Resetar acumuladores apenas na primeira repetição
+    const resetAccumulated = this.currentRepetition === 1;
+    this.typingService.startSession(this.targetText, resetAccumulated);
   }
 
   /**
@@ -170,10 +172,14 @@ export class LessonComponent implements OnInit, OnDestroy {
   private handleRepetitionComplete(): void {
     // Se há repetições e ainda não completou todas
     if (this.totalRepetitions > 1 && this.currentRepetition < this.totalRepetitions) {
+      // Acumular métricas da repetição atual antes de resetar
+      this.typingService.accumulateCurrentRepetition();
+      
       this.currentRepetition++;
       this.currentIndex = 0;
-      this.typingService.reset();
-      this.typingService.startSession(this.targetText);
+      
+      // Iniciar nova repetição sem resetar acumuladores
+      this.typingService.startSession(this.targetText, false);
     } else {
       // Completou todas as repetições
       this.completeLesson();
@@ -224,9 +230,8 @@ export class LessonComponent implements OnInit, OnDestroy {
       const nextLesson = this.lessonService.getNextLesson(this.lesson.id);
       if (nextLesson) {
         this.router.navigate(['/lesson', nextLesson.id]);
-        this.restartLesson();
       } else {
-        this.router.navigate(['/']);
+        this.router.navigate(['/home']);
       }
     }
   }

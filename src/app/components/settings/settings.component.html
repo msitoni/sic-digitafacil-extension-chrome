@@ -1,12 +1,32 @@
 <div class="settings-container">
   <!-- Header -->
   <div class="settings-header">
-    <button class="back-button" (click)="goBack()">← Voltar</button>
-    <h1>⚙️ Configurações</h1>
+    <button class="back-button" (click)="goBack()">← {{ 'SETTINGS.BACK' | translate }}</button>
+    <h1>⚙️ {{ 'SETTINGS.TITLE' | translate }}</h1>
     <p>Personalize sua experiência de aprendizagem</p>
   </div>
 
   <div class="settings-content" *ngIf="settings">
+    <!-- Idioma -->
+    <div class="setting-section">
+      <h2>🌐 {{ 'SETTINGS.LANGUAGE' | translate }}</h2>
+      <p class="section-desc">Escolha o idioma da aplicação</p>
+      
+      <div class="option-group">
+        <button 
+          *ngFor="let lang of availableLanguages"
+          class="option-button"
+          [class.active]="settings.language === lang.code"
+          (click)="updateLanguage(lang.code)"
+        >
+          <div class="option-icon">{{lang.flag}}</div>
+          <div class="option-text">
+            <div class="option-title">{{lang.name}}</div>
+          </div>
+        </button>
+      </div>
+    </div>
+
     <!-- Layout do Teclado -->
     <div class="setting-section">
       <h2>⌨️ Layout do Teclado</h2>

@@ -1,0 +1,142 @@
+<div class="instructions-container">
+  <header class="instructions-header">
+    <button class="back-button" (click)="goBack()">
+      ← {{ 'INSTRUCTIONS.BACK' | translate }}
+    </button>
+    <h1>⌨️ {{ 'INSTRUCTIONS.TITLE' | translate }}</h1>
+  </header>
+
+  <div class="content-wrapper">
+    <!-- Step indicator -->
+    <div class="step-indicator">
+      <div class="step" *ngFor="let step of steps; let i = index" [class.active]="i === currentStep">
+        {{ i + 1 }}
+      </div>
+    </div>
+
+    <!-- Instruction text -->
+    <div class="instruction-panel">
+      <h2>{{ steps[currentStep].title | translate }}</h2>
+      <p class="instruction-text">{{ steps[currentStep].description | translate }}</p>
+    </div>
+
+    <!-- Keyboard visualization -->
+    <div class="keyboard-container">
+      <!-- Hands position guide -->
+      <div class="hands-guide">
+        <div class="hand left-hand">
+          <div class="finger-label pinky" style="background: #FF6B6B;">
+            {{ 'INSTRUCTIONS.PINKY' | translate }}
+          </div>
+          <div class="finger-label ring" style="background: #4ECDC4;">
+            {{ 'INSTRUCTIONS.RING' | translate }}
+          </div>
+          <div class="finger-label middle" style="background: #95E1D3;">
+            {{ 'INSTRUCTIONS.MIDDLE' | translate }}
+          </div>
+          <div class="finger-label index" style="background: #F3A683;">
+            {{ 'INSTRUCTIONS.INDEX' | translate }}
+          </div>
+        </div>
+        <div class="hand right-hand">
+          <div class="finger-label index" style="background: #F3A683;">
+            {{ 'INSTRUCTIONS.INDEX' | translate }}
+          </div>
+          <div class="finger-label middle" style="background: #95E1D3;">
+            {{ 'INSTRUCTIONS.MIDDLE' | translate }}
+          </div>
+          <div class="finger-label ring" style="background: #4ECDC4;">
+            {{ 'INSTRUCTIONS.RING' | translate }}
+          </div>
+          <div class="finger-label pinky" style="background: #FF6B6B;">
+            {{ 'INSTRUCTIONS.PINKY' | translate }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Keyboard -->
+      <div class="keyboard">
+        <!-- Number row -->
+        <div class="keyboard-row">
+          <div class="key" *ngFor="let key of getCurrentLayout().numberRow"
+               [class.highlighted]="isKeyHighlighted(key)"
+               [style.border-color]="getKeyFingerColor(key)">
+            {{ key }}
+          </div>
+        </div>
+
+        <!-- First letter row -->
+        <div class="keyboard-row">
+          <div class="key" *ngFor="let key of getCurrentLayout().topRow"
+               [class.highlighted]="isKeyHighlighted(key)"
+               [style.border-color]="getKeyFingerColor(key)">
+            {{ key }}
+          </div>
+        </div>
+
+        <!-- Home row (base position) -->
+        <div class="keyboard-row home-row">
+          <div class="key home-key" *ngFor="let key of getCurrentLayout().homeRow"
+               [class.highlighted]="isKeyHighlighted(key)"
+               [class.base-position]="key === 'F' || key === 'J'"
+               [style.border-color]="getKeyFingerColor(key)"
+               [style.background]="isHomeRowKey(key) ? getKeyFingerColor(key) + '40' : 'white'">
+            {{ key }}
+            <span class="bump" *ngIf="key === 'F' || key === 'J'">▂</span>
+          </div>
+        </div>
+
+        <!-- Bottom row -->
+        <div class="keyboard-row">
+          <div class="key" *ngFor="let key of getCurrentLayout().bottomRow"
+               [class.highlighted]="isKeyHighlighted(key)"
+               [style.border-color]="getKeyFingerColor(key)">
+            {{ key }}
+          </div>
+        </div>
+
+        <!-- Space bar -->
+        <div class="keyboard-row">
+          <div class="key spacebar">
+            {{ 'INSTRUCTIONS.SPACEBAR' | translate }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Hand positions -->
+      <div class="hand-positions">
+        <div class="hand-icon left">
+          <span class="hand-emoji">🤚</span>
+          <div class="hand-text">{{ 'INSTRUCTIONS.LEFT_HAND' | translate }}</div>
+          <div class="keys-text">{{ getCurrentLayout().homeRow.slice(0, 5).join(' ') }}</div>
+        </div>
+        <div class="hand-icon right">
+          <span class="hand-emoji">🤚</span>
+          <div class="hand-text">{{ 'INSTRUCTIONS.RIGHT_HAND' | translate }}</div>
+          <div class="keys-text">{{ getCurrentLayout().homeRow.slice(5).join(' ') }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tips section -->
+    <div class="tips-section">
+      <h3>💡 {{ 'INSTRUCTIONS.TIPS_TITLE' | translate }}</h3>
+      <ul class="tips-list">
+        <li>{{ 'INSTRUCTIONS.TIP1' | translate }}</li>
+        <li>{{ 'INSTRUCTIONS.TIP2' | translate }}</li>
+        <li>{{ 'INSTRUCTIONS.TIP3' | translate }}</li>
+        <li>{{ 'INSTRUCTIONS.TIP4' | translate }}</li>
+      </ul>
+    </div>
+
+    <!-- Navigation buttons -->
+    <div class="navigation-buttons">
+      <button class="nav-button prev" (click)="prevStep()" [disabled]="currentStep === 0">
+        ← {{ 'INSTRUCTIONS.PREVIOUS' | translate }}
+      </button>
+      <button class="nav-button next" (click)="nextStep()">
+        {{ currentStep === steps.length - 1 ? ('INSTRUCTIONS.START_LESSON' | translate) : ('INSTRUCTIONS.NEXT' | translate) }} →
+      </button>
+    </div>
+  </div>
+</div>

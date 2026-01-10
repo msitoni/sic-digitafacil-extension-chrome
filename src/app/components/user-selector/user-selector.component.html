@@ -1,0 +1,106 @@
+<div class="user-selector-container">
+  <div class="user-selector-card">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">⌨️</div>
+      <h1>DigitaFacil</h1>
+      <p class="tagline">Quem está usando hoje?</p>
+    </div>
+
+    <!-- Error Message -->
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-overlay" *ngIf="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- User List -->
+    <div class="users-section" *ngIf="!showCreateForm">
+      <div class="users-grid" *ngIf="users.length > 0">
+        <div 
+          class="user-card" 
+          *ngFor="let user of users"
+          (click)="selectUser(user)"
+          [class.disabled]="loading"
+        >
+          <div class="user-avatar">
+            {{ user.name.charAt(0).toUpperCase() }}
+          </div>
+          <div class="user-info">
+            <h3 class="user-name">{{ user.name }}</h3>
+            <p class="user-last-access">{{ getLastAccessText(user.lastAccess) }}</p>
+          </div>
+          <button 
+            class="delete-btn" 
+            (click)="deleteUser($event, user)"
+            [disabled]="loading"
+            title="Excluir perfil"
+          >
+            🗑️
+          </button>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="users.length === 0">
+        <div class="empty-icon">👤</div>
+        <p>Nenhum perfil encontrado</p>
+        <p class="empty-hint">Crie seu primeiro perfil para começar!</p>
+      </div>
+
+      <!-- New User Button -->
+      <button 
+        class="btn-new-user" 
+        (click)="toggleCreateForm()"
+        [disabled]="loading"
+      >
+        ➕ Criar Novo Perfil
+      </button>
+    </div>
+
+    <!-- Create User Form -->
+    <div class="create-form" *ngIf="showCreateForm">
+      <h2>Criar Novo Perfil</h2>
+      
+      <div class="form-group">
+        <label for="userName">Qual é o seu nome?</label>
+        <input
+          type="text"
+          id="userName"
+          [(ngModel)]="newUserName"
+          (keypress)="handleKeyPress($event)"
+          placeholder="Digite seu nome"
+          maxlength="30"
+          [disabled]="loading"
+          autofocus
+        />
+        <small class="hint">Mínimo 2 caracteres, máximo 30</small>
+      </div>
+
+      <div class="form-actions">
+        <button 
+          class="btn-cancel" 
+          (click)="toggleCreateForm()"
+          [disabled]="loading"
+        >
+          Cancelar
+        </button>
+        <button 
+          class="btn-create" 
+          (click)="createUser()"
+          [disabled]="loading || !newUserName.trim()"
+        >
+          Criar Perfil
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>💡 Dica: Cada pessoa pode ter seu próprio progresso e estatísticas</p>
+    </div>
+  </div>
+</div>
