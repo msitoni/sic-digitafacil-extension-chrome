@@ -1,0 +1,125 @@
+<div class="stats-container">
+  <!-- Header -->
+  <div class="stats-header">
+    <button class="back-button" (click)="goBack()">← Voltar</button>
+    <h1>📊 Suas Estatísticas</h1>
+    <p>Acompanhe seu progresso e desempenho</p>
+  </div>
+
+  <!-- Main Stats -->
+  <div class="main-stats" *ngIf="stats">
+    <div class="stat-card highlight">
+      <div class="stat-icon">⚡</div>
+      <div class="stat-info">
+        <div class="stat-label">Melhor PPM</div>
+        <div class="stat-value">{{ stats.bestPPM }}</div>
+        <div class="stat-desc">{{ getPerformanceRating(stats.bestPPM) }}</div>
+      </div>
+    </div>
+
+    <div class="stat-card highlight">
+      <div class="stat-icon">🎯</div>
+      <div class="stat-info">
+        <div class="stat-label">Melhor Precisão</div>
+        <div class="stat-value">{{ stats.bestAccuracy }}%</div>
+        <div class="stat-desc">{{ getAccuracyRating(stats.bestAccuracy) }}</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">📈</div>
+      <div class="stat-info">
+        <div class="stat-label">WPM Médio</div>
+        <div class="stat-value">{{ stats.averagePPM }}</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">✨</div>
+      <div class="stat-info">
+        <div class="stat-label">Precisão Média</div>
+        <div class="stat-value">{{ stats.averageAccuracy }}%</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">⌨️</div>
+      <div class="stat-info">
+        <div class="stat-label">Total de Teclas</div>
+        <div class="stat-value">{{ stats.totalKeystrokes.toLocaleString() }}</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">📚</div>
+      <div class="stat-info">
+        <div class="stat-label">Sessões Totais</div>
+        <div class="stat-value">{{ stats.totalSessions }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Errors by Key -->
+  <div class="errors-section" *ngIf="errorsByKeyArray.length > 0">
+    <h2>🎯 Teclas com Mais Erros</h2>
+    <p class="section-desc">Foque nestas teclas para melhorar sua precisão</p>
+    
+    <div class="errors-list">
+      <div class="error-item" *ngFor="let error of errorsByKeyArray; let i = index">
+        <div class="error-rank">{{ i + 1 }}</div>
+        <div class="error-key">{{ error.key }}</div>
+        <div class="error-bar-container">
+          <div 
+            class="error-bar" 
+            [style.width.%]="(error.count / errorsByKeyArray[0].count) * 100"
+          ></div>
+        </div>
+        <div class="error-count">{{ error.count }} erros</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Session History -->
+  <div class="history-section" *ngIf="sessionHistory.length > 0">
+    <h2>📜 Histórico Recente</h2>
+    <p class="section-desc">Últimas sessões de treino</p>
+    
+    <div class="history-list">
+      <div 
+        class="history-item" 
+        *ngFor="let session of sessionHistory"
+        [class.completed]="session.completed"
+      >
+        <div class="history-date">
+          <div class="date-day">{{ formatDate(session.date).split(' ')[0] }}</div>
+          <div class="date-time">{{ formatDate(session.date).split(' ')[1] }}</div>
+        </div>
+
+        <div class="history-details">
+          <div class="history-title">Lição {{ session.lessonId }}</div>
+          <div class="history-meta">
+            <span>{{ session.metrics.ppm }} PPM</span>
+            <span>•</span>
+            <span>{{ session.metrics.accuracy }}% precisão</span>
+            <span>•</span>
+            <span>{{ formatDuration(session.duration) }}</span>
+          </div>
+        </div>
+
+        <div class="history-status">
+          <span class="status-badge" [class.success]="session.completed">
+            {{ session.completed ? '✓ Completo' : '○ Praticado' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!stats || stats.totalSessions === 0">
+    <div class="empty-icon">📊</div>
+    <h3>Ainda não há estatísticas</h3>
+    <p>Complete algumas lições para ver suas estatísticas aparecerem aqui!</p>
+    <button class="action-button" (click)="goBack()">Começar a Praticar</button>
+  </div>
+</div>

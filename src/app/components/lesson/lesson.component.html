@@ -1,0 +1,135 @@
+<div class="lesson-container">
+  <!-- Header -->
+  <div class="lesson-header">
+    <button class="back-button" (click)="backToLessons()">
+      ← Voltar
+    </button>
+    <div class="lesson-info" *ngIf="lesson">
+      <h2>{{ lesson.title }}</h2>
+      <p>{{ lesson.description }}</p>
+      <div class="lesson-requirements">
+        <span class="requirement">Meta PPM: {{ lesson.minPPM }}</span>
+        <span class="requirement">Meta Precisão: {{ lesson.minAccuracy }}%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Metrics Display -->
+  <div class="metrics-panel" *ngIf="isStarted && !showResults">
+    <div class="metric" *ngIf="totalRepetitions > 1">
+      <span class="metric-label">Repetição</span>
+      <span class="metric-value">{{ currentRepetition }}/{{ totalRepetitions }}</span>
+    </div>
+    <div class="metric">
+      <span class="metric-label">WPM</span>
+      <span class="metric-value" [style.color]="getPPMColor()">{{ metrics.ppm }}</span>
+    </div>
+    <div class="metric">
+      <span class="metric-label">Precisão</span>
+      <span class="metric-value" [style.color]="getAccuracyColor()">{{ metrics.accuracy }}%</span>
+    </div>
+    <div class="metric">
+      <span class="metric-label">Erros</span>
+      <span class="metric-value">{{ metrics.errors }}</span>
+    </div>
+    <div class="metric">
+      <span class="metric-label">Tempo</span>
+      <span class="metric-value">{{ formatTime(metrics.elapsedTime) }}</span>
+    </div>
+    <div class="metric">
+      <span class="metric-label">Consistência</span>
+      <span class="metric-value">{{ metrics.consistency }}%</span>
+    </div>
+  </div>
+
+  <!-- Typing Area -->
+  <div class="typing-area" *ngIf="!showResults">
+    <div class="text-display">
+      <span 
+        *ngFor="let char of targetText.split(''); let i = index"
+        class="char"
+        [class.typed]="isCharTyped(i)"
+        [class.current]="isCurrentChar(i)"
+        [class.space]="char === ' '"
+      >
+        {{ char === ' ' ? '␣' : char }}
+      </span>
+    </div>
+
+    <div class="start-prompt" *ngIf="!isStarted">
+      <p>👆 Comece a digitar para iniciar a lição</p>
+      <p class="hint">Dica: Mantenha os dedos na posição inicial (ASDF - JKLÇ)</p>
+    </div>
+
+    <div class="pause-overlay" *ngIf="isPaused">
+      <div class="pause-message">
+        <h3>⏸️ Pausado</h3>
+        <button class="resume-button" (click)="togglePause()">Continuar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Screen -->
+  <div class="results-screen" *ngIf="showResults">
+    <div class="results-header">
+      <h2 *ngIf="passed">🎉 Parabéns! Você passou!</h2>
+      <h2 *ngIf="!passed">📝 Continue praticando!</h2>
+    </div>
+
+    <div class="results-grid">
+      <div class="result-card">
+        <div class="result-icon">⚡</div>
+        <div class="result-label">Velocidade</div>
+        <div class="result-value">{{ metrics.ppm }} PPM</div>
+        <div class="result-status" [class.success]="lesson && metrics.ppm >= lesson.minPPM">
+          {{ lesson && metrics.ppm >= lesson.minPPM ? '✓ Meta atingida!' : '✗ Abaixo da meta' }}
+        </div>
+      </div>
+
+      <div class="result-card">
+        <div class="result-icon">🎯</div>
+        <div class="result-label">Precisão</div>
+        <div class="result-value">{{ metrics.accuracy }}%</div>
+        <div class="result-status" [class.success]="lesson && metrics.accuracy >= lesson.minAccuracy">
+          {{ lesson && metrics.accuracy >= lesson.minAccuracy ? '✓ Meta atingida!' : '✗ Abaixo da meta' }}
+        </div>
+      </div>
+
+      <div class="result-card">
+        <div class="result-icon">⏱️</div>
+        <div class="result-label">Tempo Total</div>
+        <div class="result-value">{{ formatTime(metrics.elapsedTime) }}</div>
+        <div class="result-status">{{ metrics.totalKeystrokes }} teclas</div>
+      </div>
+
+      <div class="result-card">
+        <div class="result-icon">📊</div>
+        <div class="result-label">Consistência</div>
+        <div class="result-value">{{ metrics.consistency }}%</div>
+        <div class="result-status">{{ metrics.errors }} erros</div>
+      </div>
+    </div>
+
+    <div class="results-actions">
+      <button class="action-button secondary" (click)="restartLesson()">
+        🔄 Tentar Novamente
+      </button>
+      <button class="action-button primary" (click)="nextLesson()" *ngIf="passed">
+        ➡️ Próxima Lição
+      </button>
+      <button class="action-button secondary" (click)="backToLessons()">
+        📚 Ver Todas as Lições
+      </button>
+    </div>
+  </div>
+
+  <!-- Action Buttons (during practice) -->
+  <div class="action-bar" *ngIf="isStarted && !showResults">
+    <button class="action-button small" (click)="togglePause()">
+      {{ isPaused ? '▶️ Continuar' : '⏸️ Pausar' }}
+    </button>
+    <button class="action-button small secondary" (click)="restartLesson()">
+      🔄 Reiniciar
+    </button>
+  </div>
+</div>

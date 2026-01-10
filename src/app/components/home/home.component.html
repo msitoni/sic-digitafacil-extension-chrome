@@ -1,0 +1,150 @@
+<div class="home-container">
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-content">
+      <h1>⌨️ Digitação Pro</h1>
+      <p class="subtitle">Aprenda datilografia do jeito profissional</p>
+    </div>
+    <div class="header-actions">
+      <button class="header-button" (click)="goToStats()">📊 Estatísticas</button>
+      <button class="header-button" (click)="goToSettings()">⚙️ Configurações</button>
+    </div>
+  </header>
+
+  <!-- Progress Dashboard -->
+  <div class="progress-dashboard" *ngIf="progress">
+    <div class="progress-card">
+      <div class="progress-stat">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-content">
+          <div class="stat-label">Progresso Geral</div>
+          <div class="stat-value">{{ getProgressPercentage() }}%</div>
+        </div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-icon">📚</div>
+        <div class="stat-content">
+          <div class="stat-label">Lições Completas</div>
+          <div class="stat-value">{{ progress.completedLessons.length }}</div>
+        </div>
+      </div>
+
+      <div class="stat-item">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-content">
+          <div class="stat-label">Nível Atual</div>
+          <div class="stat-value">{{ progress.level }}</div>
+        </div>
+      </div>
+
+      <div class="stat-item">
+        <div class="stat-icon">⭐</div>
+        <div class="stat-content">
+          <div class="stat-label">XP Total</div>
+          <div class="stat-value">{{ progress.xp }}</div>
+        </div>
+      </div>
+
+      <div class="stat-item">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-content">
+          <div class="stat-label">Sequência</div>
+          <div class="stat-value">{{ progress.streak }} dias</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Level Filter -->
+  <div class="filter-section">
+    <h2>Escolha suas Lições</h2>
+    <div class="filter-buttons">
+      <button 
+        class="filter-button" 
+        [class.active]="selectedLevel === 'all'"
+        (click)="filterByLevel('all')"
+      >
+        Todas
+      </button>
+      <button 
+        class="filter-button" 
+        [class.active]="selectedLevel === 'beginner'"
+        [style.--level-color]="getLevelColor('beginner')"
+        (click)="filterByLevel('beginner')"
+      >
+        Iniciante
+      </button>
+      <button 
+        class="filter-button" 
+        [class.active]="selectedLevel === 'intermediate'"
+        [style.--level-color]="getLevelColor('intermediate')"
+        (click)="filterByLevel('intermediate')"
+      >
+        Intermediário
+      </button>
+      <button 
+        class="filter-button" 
+        [class.active]="selectedLevel === 'advanced'"
+        [style.--level-color]="getLevelColor('advanced')"
+        (click)="filterByLevel('advanced')"
+      >
+        Avançado
+      </button>
+      <button 
+        class="filter-button" 
+        [class.active]="selectedLevel === 'expert'"
+        [style.--level-color]="getLevelColor('expert')"
+        (click)="filterByLevel('expert')"
+      >
+        Expert
+      </button>
+    </div>
+  </div>
+
+  <!-- Lessons Grid -->
+  <div class="lessons-grid">
+    <div 
+      *ngFor="let lesson of lessons" 
+      class="lesson-card"
+      [class.completed]="isLessonCompleted(lesson.id)"
+      [class.locked]="isLessonLocked(lesson.id)"
+      (click)="!isLessonLocked(lesson.id) && startLesson(lesson.id)"
+    >
+      <div class="lesson-number">
+        <span *ngIf="!isLessonLocked(lesson.id) && !isLessonCompleted(lesson.id)">{{ lesson.id }}</span>
+        <span *ngIf="isLessonCompleted(lesson.id)" class="completed-icon">✓</span>
+        <span *ngIf="isLessonLocked(lesson.id)" class="locked-icon">🔒</span>
+      </div>
+
+      <div class="lesson-content">
+        <h3>{{ lesson.title }}</h3>
+        <p>{{ lesson.description }}</p>
+
+        <div class="lesson-meta">
+          <span class="level-badge" [style.background-color]="getLevelColor(lesson.level)">
+            {{ getLevelLabel(lesson.level) }}
+          </span>
+          <span class="lesson-requirement">
+            {{ lesson.minPPM }} PPM · {{ lesson.minAccuracy }}% precisão
+          </span>
+        </div>
+      </div>
+
+      <div class="lesson-action">
+        <button 
+          class="start-button" 
+          *ngIf="!isLessonLocked(lesson.id)"
+          [class.resume]="!isLessonCompleted(lesson.id)"
+        >
+          {{ isLessonCompleted(lesson.id) ? 'Revisar' : 'Iniciar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

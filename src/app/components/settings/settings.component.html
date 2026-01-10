@@ -1,0 +1,249 @@
+<div class="settings-container">
+  <!-- Header -->
+  <div class="settings-header">
+    <button class="back-button" (click)="goBack()">← Voltar</button>
+    <h1>⚙️ Configurações</h1>
+    <p>Personalize sua experiência de aprendizagem</p>
+  </div>
+
+  <div class="settings-content" *ngIf="settings">
+    <!-- Layout do Teclado -->
+    <div class="setting-section">
+      <h2>⌨️ Layout do Teclado</h2>
+      <p class="section-desc">Escolha o layout que você usa</p>
+      
+      <div class="option-group">
+        <button 
+          class="option-button"
+          [class.active]="settings.layout === 'ABNT2'"
+          (click)="updateLayout('ABNT2')"
+        >
+          <div class="option-icon">🇧🇷</div>
+          <div class="option-text">
+            <div class="option-title">ABNT2</div>
+            <div class="option-desc">Brasileiro padrão</div>
+          </div>
+        </button>
+
+        <button 
+          class="option-button"
+          [class.active]="settings.layout === 'US'"
+          (click)="updateLayout('US')"
+        >
+          <div class="option-icon">🇺🇸</div>
+          <div class="option-text">
+            <div class="option-title">US</div>
+            <div class="option-desc">Americano</div>
+          </div>
+        </button>
+
+        <button 
+          class="option-button"
+          [class.active]="settings.layout === 'UK'"
+          (click)="updateLayout('UK')"
+        >
+          <div class="option-icon">🇬🇧</div>
+          <div class="option-text">
+            <div class="option-title">UK</div>
+            <div class="option-desc">Britânico</div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Dificuldade -->
+    <div class="setting-section">
+      <h2>🎯 Nível de Dificuldade</h2>
+      <p class="section-desc">Ajuste o desafio das lições</p>
+      
+      <div class="option-group">
+        <button 
+          class="option-button"
+          [class.active]="settings.difficulty === 'beginner'"
+          (click)="updateDifficulty('beginner')"
+        >
+          <div class="option-icon">🌱</div>
+          <div class="option-text">
+            <div class="option-title">Iniciante</div>
+          </div>
+        </button>
+
+        <button 
+          class="option-button"
+          [class.active]="settings.difficulty === 'intermediate'"
+          (click)="updateDifficulty('intermediate')"
+        >
+          <div class="option-icon">💪</div>
+          <div class="option-text">
+            <div class="option-title">Intermediário</div>
+          </div>
+        </button>
+
+        <button 
+          class="option-button"
+          [class.active]="settings.difficulty === 'advanced'"
+          (click)="updateDifficulty('advanced')"
+        >
+          <div class="option-icon">🌟</div>
+          <div class="option-text">
+            <div class="option-title">Avançado</div>
+          </div>
+        </button>
+
+        <button 
+          class="option-button"
+          [class.active]="settings.difficulty === 'expert'"
+          (click)="updateDifficulty('expert')"
+        >
+          <div class="option-icon">🏆</div>
+          <div class="option-text">
+            <div class="option-title">Expert</div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tema -->
+    <div class="setting-section">
+      <h2>🎨 Tema Visual</h2>
+      <p class="section-desc">Escolha a aparência do aplicativo</p>
+      
+      <div class="option-group">
+        <button 
+          class="option-button"
+          [class.active]="settings.theme === 'light'"
+          (click)="updateTheme('light')"
+        >
+          <div class="option-icon">☀️</div>
+          <div class="option-text">
+            <div class="option-title">Claro</div>
+          </div>
+        </button>
+
+        <button 
+          class="option-button"
+          [class.active]="settings.theme === 'dark'"
+          (click)="updateTheme('dark')"
+        >
+          <div class="option-icon">🌙</div>
+          <div class="option-text">
+            <div class="option-title">Escuro</div>
+          </div>
+        </button>
+
+        <button 
+          class="option-button"
+          [class.active]="settings.theme === 'auto'"
+          (click)="updateTheme('auto')"
+        >
+          <div class="option-icon">🔄</div>
+          <div class="option-text">
+            <div class="option-title">Automático</div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Toggles -->
+    <div class="setting-section">
+      <h2>🔧 Preferências</h2>
+      
+      <div class="toggle-list">
+        <div class="toggle-item">
+          <div class="toggle-info">
+            <div class="toggle-icon">🔊</div>
+            <div class="toggle-text">
+              <div class="toggle-title">Sons de Feedback</div>
+              <div class="toggle-desc">Toca sons ao digitar</div>
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input 
+              type="checkbox" 
+              [checked]="settings.soundEnabled"
+              (change)="toggleSound()"
+            >
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-item">
+          <div class="toggle-info">
+            <div class="toggle-icon">⌨️</div>
+            <div class="toggle-text">
+              <div class="toggle-title">Mostrar Teclado</div>
+              <div class="toggle-desc">Exibe teclado virtual nas lições</div>
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input 
+              type="checkbox" 
+              [checked]="settings.showKeyboard"
+              (change)="toggleKeyboard()"
+            >
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-item">
+          <div class="toggle-info">
+            <div class="toggle-icon">🔔</div>
+            <div class="toggle-text">
+              <div class="toggle-title">Lembretes de Prática</div>
+              <div class="toggle-desc">Receba notificações para praticar</div>
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input 
+              type="checkbox" 
+              [checked]="settings.practiceReminders"
+              (change)="toggleReminders()"
+            >
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="setting-section">
+      <h2>💾 Dados</h2>
+      
+      <div class="action-list">
+        <button class="action-item" (click)="syncData()">
+          <div class="action-icon">☁️</div>
+          <div class="action-text">
+            <div class="action-title">Sincronizar Dados</div>
+            <div class="action-desc">Salva progresso na nuvem do Chrome</div>
+          </div>
+        </button>
+
+        <button class="action-item danger" (click)="showResetDialog()">
+          <div class="action-icon">🗑️</div>
+          <div class="action-text">
+            <div class="action-title">Resetar Todos os Dados</div>
+            <div class="action-desc">Apaga todo progresso e configurações</div>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reset Confirmation Modal -->
+  <div class="modal-overlay" *ngIf="showResetConfirm" (click)="cancelReset()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>⚠️ Confirmar Reset</h3>
+      <p>Tem certeza que deseja apagar todos os seus dados?</p>
+      <p class="warning">Esta ação não pode ser desfeita!</p>
+      
+      <div class="modal-actions">
+        <button class="modal-button secondary" (click)="cancelReset()">
+          Cancelar
+        </button>
+        <button class="modal-button danger" (click)="confirmReset()">
+          Sim, Resetar Tudo
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

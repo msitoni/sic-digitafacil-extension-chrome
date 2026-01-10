@@ -1,0 +1,344 @@
+.settings-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.settings-header {
+  margin-bottom: 30px;
+
+  .back-button {
+    background: #6366f1;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 15px;
+    transition: background 0.3s;
+
+    &:hover {
+      background: #4f46e5;
+    }
+  }
+
+  h1 {
+    margin: 0 0 8px 0;
+    font-size: 36px;
+    color: #1f2937;
+  }
+
+  p {
+    margin: 0;
+    font-size: 16px;
+    color: #6b7280;
+  }
+}
+
+.settings-content {
+  .setting-section {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    h2 {
+      margin: 0 0 8px 0;
+      font-size: 22px;
+      color: #1f2937;
+    }
+
+    .section-desc {
+      margin: 0 0 20px 0;
+      font-size: 14px;
+      color: #6b7280;
+    }
+  }
+}
+
+.option-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+
+  .option-button {
+    background: #f9fafb;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    &:hover {
+      background: #f3f4f6;
+      border-color: #d1d5db;
+    }
+
+    &.active {
+      background: #eef2ff;
+      border-color: #6366f1;
+      border-width: 3px;
+
+      .option-icon {
+        transform: scale(1.1);
+      }
+    }
+
+    .option-icon {
+      font-size: 36px;
+      transition: transform 0.3s;
+    }
+
+    .option-text {
+      flex: 1;
+
+      .option-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 4px;
+      }
+
+      .option-desc {
+        font-size: 13px;
+        color: #6b7280;
+      }
+    }
+  }
+}
+
+.toggle-list {
+  .toggle-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: #f9fafb;
+    border-radius: 12px;
+    margin-bottom: 12px;
+
+    .toggle-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex: 1;
+
+      .toggle-icon {
+        font-size: 32px;
+      }
+
+      .toggle-text {
+        .toggle-title {
+          font-size: 16px;
+          font-weight: 600;
+          color: #1f2937;
+          margin-bottom: 4px;
+        }
+
+        .toggle-desc {
+          font-size: 13px;
+          color: #6b7280;
+        }
+      }
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 56px;
+      height: 30px;
+      flex-shrink: 0;
+
+      input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+
+        &:checked + .toggle-slider {
+          background-color: #10b981;
+
+          &:before {
+            transform: translateX(26px);
+          }
+        }
+      }
+
+      .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #d1d5db;
+        transition: 0.3s;
+        border-radius: 30px;
+
+        &:before {
+          position: absolute;
+          content: "";
+          height: 22px;
+          width: 22px;
+          left: 4px;
+          bottom: 4px;
+          background-color: white;
+          transition: 0.3s;
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+}
+
+.action-list {
+  .action-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: #f9fafb;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: left;
+    width: 100%;
+
+    &:hover {
+      background: #f3f4f6;
+      border-color: #d1d5db;
+      transform: translateY(-2px);
+    }
+
+    &.danger {
+      &:hover {
+        background: #fee2e2;
+        border-color: #fecaca;
+      }
+    }
+
+    .action-icon {
+      font-size: 32px;
+    }
+
+    .action-text {
+      flex: 1;
+
+      .action-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 4px;
+      }
+
+      .action-desc {
+        font-size: 13px;
+        color: #6b7280;
+      }
+    }
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+
+  .modal-content {
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+
+    h3 {
+      margin: 0 0 15px 0;
+      font-size: 28px;
+      color: #1f2937;
+    }
+
+    p {
+      margin: 0 0 10px 0;
+      font-size: 16px;
+      color: #6b7280;
+
+      &.warning {
+        color: #ef4444;
+        font-weight: 600;
+        font-size: 14px;
+      }
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+
+      .modal-button {
+        flex: 1;
+        padding: 15px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+
+        &.secondary {
+          background: #e5e7eb;
+          color: #1f2937;
+
+          &:hover {
+            background: #d1d5db;
+          }
+        }
+
+        &.danger {
+          background: #ef4444;
+          color: white;
+
+          &:hover {
+            background: #dc2626;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .settings-container {
+    padding: 15px;
+  }
+
+  .option-group {
+    grid-template-columns: 1fr;
+  }
+
+  .toggle-item {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 15px;
+
+    .toggle-switch {
+      align-self: flex-end;
+    }
+  }
+}
