@@ -55,7 +55,11 @@ export class HomeComponent implements OnInit {
       }
     });
 
-    this.loadLessons();
+    // Se inscreve para receber as lições quando elas forem carregadas
+    this.lessonService.lessons$.subscribe(lessons => {
+      this.loadLessons();
+    });
+
     this.loadProgress();
   }
 
@@ -81,8 +85,9 @@ export class HomeComponent implements OnInit {
   }
 
   loadLessons(): void {
+    const allLessons = this.lessonService.getAllLessons();
     if (this.selectedLevel === 'all') {
-      this.lessons = this.lessonService.getAllLessons();
+      this.lessons = allLessons;
     } else {
       this.lessons = this.lessonService.getLessonsByLevel(this.selectedLevel);
     }

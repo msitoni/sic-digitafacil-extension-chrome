@@ -51,20 +51,26 @@ export class LessonComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Carregar lição
     const lessonId = Number(this.route.snapshot.paramMap.get('id')) || 1;
-    this.lesson = this.lessonService.getLessonById(lessonId) || null;
     
-    if (!this.lesson) {
-      this.router.navigate(['/']);
-      return;
-    }
-    
-    this.targetText = this.lesson.text;
-    
-    // Configurar repetições para lições beginner
-    if (this.lesson.level === 'beginner' && this.lesson.repetitionCount) {
-      this.totalRepetitions = this.lesson.repetitionCount;
-      this.currentRepetition = 1;
-    }
+    // Se inscreve para receber as lições quando elas forem carregadas
+    this.lessonService.lessons$.pipe(takeUntil(this.destroy$)).subscribe(lessons => {
+      if (lessons.length > 0) {
+        this.lesson = this.lessonService.getLessonById(lessonId) || null;
+        
+        if (!this.lesson) {
+          this.router.navigate(['/']);
+          return;
+        }
+        
+        this.targetText = this.lesson.text;
+        
+        // Configurar repetições para lições beginner
+        if (this.lesson.level === 'beginner' && this.lesson.repetitionCount) {
+          this.totalRepetitions = this.lesson.repetitionCount;
+          this.currentRepetition = 1;
+        }
+      }
+    });
     
     // Carregar configurações
     this.storageService.settings$.pipe(takeUntil(this.destroy$)).subscribe(settings => {
