@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { UserService, UserProfile } from '../../services/user.service';
 import { StorageService } from '../../services/storage.service';
 
@@ -14,14 +15,37 @@ export class UserSelectorComponent implements OnInit {
   newUserName = '';
   errorMessage = '';
   loading = false;
+  selectedLanguage: string = 'pt-BR';
+  showLanguageSelector = false;
+  
+  availableLanguages: Array<{code: 'pt-BR' | 'en' | 'es' | 'de' | 'fr' | 'it' | 'ja' | 'zh' | 'ru' | 'ar', name: string, flag: string}> = [
+    { code: 'pt-BR', name: 'Português', flag: '🇧🇷' },
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'es', name: 'Español', flag: '🇪🇸' },
+    { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+    { code: 'fr', name: 'Français', flag: '🇫🇷' },
+    { code: 'it', name: 'Italiano', flag: '🇮🇹' },
+    { code: 'ja', name: '日本語', flag: '🇯🇵' },
+    { code: 'zh', name: '中文', flag: '🇨🇳' },
+    { code: 'ru', name: 'Русский', flag: '🇷🇺' },
+    { code: 'ar', name: 'العربية', flag: '🇸🇦' }
+  ];
 
   constructor(
     private userService: UserService,
     private storageService: StorageService,
-    private router: Router
+    private router: Router,
+    private translate: TranslateService
   ) {}
 
   async ngOnInit(): Promise<void> {
+    // Detecta idioma do navegador ou usa pt-BR como padrão
+    const browserLang = this.translate.getBrowserLang() || 'pt-BR';
+    this.selectedLanguage = ['pt', 'en', 'es', 'de', 'fr', 'it', 'ja', 'zh', 'ru', 'ar'].includes(browserLang) 
+      ? (browserLang === 'pt' ? 'pt-BR' : browserLang as any)
+      : 'pt-BR';
+    this.translate.use(this.selectedLanguage);
+    
     await this.loadUsers();
   }
 
@@ -122,5 +146,25 @@ export class UserSelectorComponent implements OnInit {
     if (event.key === 'Enter') {
       this.createUser();
     }
+  }
+
+  toggleLanguageSelector(): void {
+    this.showLanguageSelector = !this.showLanguageSelector;
+  }
+
+  changeLanguage(languageCode: string): void {
+    this.selectedLanguage = languageCode;
+    this.translate.use(languageCode);
+    this.showLanguageSelector = false;
+  }
+
+  getCurrentLanguageFlag(): string {
+    const lang = this.availableLanguages.find(l => l.code === this.selectedLanguage);
+    return lang ? lang.flag : '🌐';
+  }
+
+  getCurrentLanguageName(): string {
+    const lang = this.availableLanguages.find(l => l.code === this.selectedLanguage);
+    return lang ? lang.name : 'Language';
   }
 }

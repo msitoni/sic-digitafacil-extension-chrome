@@ -1,5 +1,27 @@
 <div class="user-selector-container">
   <div class="user-selector-card">
+    <!-- Language Selector (Top Right) -->
+    <div class="language-selector-wrapper">
+      <button class="language-toggle" (click)="toggleLanguageSelector()">
+        <span class="flag">{{ getCurrentLanguageFlag() }}</span>
+        <span class="lang-name">{{ getCurrentLanguageName() }}</span>
+        <span class="arrow">{{ showLanguageSelector ? '▲' : '▼' }}</span>
+      </button>
+      
+      <div class="language-dropdown" *ngIf="showLanguageSelector">
+        <button 
+          *ngFor="let lang of availableLanguages"
+          class="language-option"
+          [class.active]="lang.code === selectedLanguage"
+          (click)="changeLanguage(lang.code)"
+        >
+          <span class="flag">{{ lang.flag }}</span>
+          <span class="name">{{ lang.name }}</span>
+          <span class="check" *ngIf="lang.code === selectedLanguage">✓</span>
+        </button>
+      </div>
+    </div>
+
     <!-- Header -->
     <div class="header">
       <div class="logo">⌨️</div>
