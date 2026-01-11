@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { StorageService, UserStats, SessionHistory } from '../../services/storage.service';
 
 @Component({
@@ -14,10 +15,18 @@ export class StatsComponent implements OnInit {
 
   constructor(
     private storageService: StorageService,
-    private router: Router
+    private router: Router,
+    private translate: TranslateService
   ) {}
 
   async ngOnInit(): Promise<void> {
+    // Se inscreve para mudanças de idioma
+    this.storageService.settings$.subscribe(settings => {
+      if (settings && settings.language) {
+        this.translate.use(settings.language);
+      }
+    });
+    
     await this.loadStats();
     await this.loadHistory();
   }

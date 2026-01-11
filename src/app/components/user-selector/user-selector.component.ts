@@ -99,6 +99,8 @@ export class UserSelectorComponent implements OnInit {
       this.errorMessage = '';
       const newUser = await this.userService.createUser(this.newUserName);
       await this.userService.selectUser(newUser.id);
+      // Salva o idioma selecionado nas configurações do novo usuário
+      await this.storageService.updateSetting('language', this.selectedLanguage as any);
       this.router.navigate(['/home']);
     } catch (error: any) {
       this.errorMessage = error.message || 'Erro ao criar usuário';
@@ -156,6 +158,9 @@ export class UserSelectorComponent implements OnInit {
     this.selectedLanguage = languageCode;
     this.translate.use(languageCode);
     this.showLanguageSelector = false;
+    
+    // Salva temporariamente no localStorage para persistir durante a criação do usuário
+    localStorage.setItem('pendingLanguage', languageCode);
   }
 
   getCurrentLanguageFlag(): string {

@@ -1,6 +1,7 @@
 import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 import { TypingService, TypingMetrics } from '../../services/typing.service';
 import { LessonService, Lesson } from '../../services/lesson.service';
 import { StorageService } from '../../services/storage.service';
@@ -45,10 +46,21 @@ export class LessonComponent implements OnInit, OnDestroy {
     private router: Router,
     private typingService: TypingService,
     private lessonService: LessonService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
+    // Se inscreve para mudanças de idioma
+    this.storageService.settings$.pipe(takeUntil(this.destroy$)).subscribe(settings => {
+      if (settings) {
+        this.soundEnabled = settings.soundEnabled;
+        if (settings.language) {
+          this.translate.use(settings.language);
+        }
+      }
+    });
+    
     // Carregar lição
     const lessonId = Number(this.route.snapshot.paramMap.get('id')) || 1;
     
@@ -69,13 +81,6 @@ export class LessonComponent implements OnInit, OnDestroy {
           this.totalRepetitions = this.lesson.repetitionCount;
           this.currentRepetition = 1;
         }
-      }
-    });
-    
-    // Carregar configurações
-    this.storageService.settings$.pipe(takeUntil(this.destroy$)).subscribe(settings => {
-      if (settings) {
-        this.soundEnabled = settings.soundEnabled;
       }
     });
     

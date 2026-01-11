@@ -245,10 +245,11 @@ export class InstructionsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Detectar idioma atual
+    // Detectar idioma atual e reagir a mudanças
     this.storageService.settings$.subscribe(settings => {
       if (settings && settings.language) {
         this.currentLanguage = settings.language;
+        this.translate.use(settings.language);
         this.updateStepHighlights();
       }
     });
